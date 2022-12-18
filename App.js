@@ -1,48 +1,52 @@
-import React, { useState } from 'react';
-import { createStore, combineReducers, applyMiddleware } from 'redux';
-import { Provider } from 'react-redux';
-import { AppLoading } from 'expo';
-import * as Font from 'expo-font';
-import ReduxThunk from 'redux-thunk';
+/**
+ * Sample React Native App
+ * https://github.com/facebook/react-native
+ *
+ * @format
+ * @flow strict-local
+ */
 
-import productsReducer from './store/reducers/products';
-import cartReducer from './store/reducers/cart';
-import ordersReducer from './store/reducers/orders';
-import authReducer from './store/reducers/auth';
-import AppNavigator from './navigation/AppNavigator';
+import React ,{useEffect,useState}from 'react';
+import MainStack from './app/routing/MainStack';
+import {Provider} from 'react-redux';
+import {StatusBar} from 'react-native';
+import storePre from './app/redux/store';
+import DropdownAlert from 'react-native-dropdownalert';
+import {AlertHelper} from './app/utils/AlertHelper';
+import {PersistGate} from 'redux-persist/integration/react';
+import TabNavigationStack from './app/routing/TabNavigationStack';
+import {navigationTypeTabs} from './app.json';
+import Feather from 'react-native-vector-icons/Feather'; 
+import Ionicons from 'react-native-vector-icons/Ionicons'; 
+import FontAwesome from 'react-native-vector-icons/FontAwesome'; 
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'; 
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'; 
 
-const rootReducer = combineReducers({
-  products: productsReducer,
-  cart: cartReducer,
-  orders: ordersReducer,
-  auth: authReducer
-});
+MaterialIcons.loadFont()
+Ionicons.loadFont()
+FontAwesome.loadFont()
+Feather.loadFont()
+MaterialCommunityIcons.loadFont()
+const App: () => React$Node = () => {
+  const {persistor, store} = storePre;
+ 
 
-const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
-
-const fetchFonts = () => {
-  return Font.loadAsync({
-    'open-sans': require('./assets/fonts/OpenSans-Regular.ttf'),
-    'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf')
-  });
-};
-
-export default function App() {
-  const [fontLoaded, setFontLoaded] = useState(false);
-
-  if (!fontLoaded) {
-    return (
-      <AppLoading
-        startAsync={fetchFonts}
-        onFinish={() => {
-          setFontLoaded(true);
-        }}
-      />
-    );
-  }
   return (
     <Provider store={store}>
-      <AppNavigator />
+      <PersistGate loading={null} persistor={persistor}>
+        {navigationTypeTabs ? <TabNavigationStack/> : <MainStack />} 
+        <DropdownAlert
+          defaultContainer={{
+            padding: 8,
+            paddingTop: StatusBar.currentHeight,
+            flexDirection: 'row',
+          }}
+          ref={(ref) => AlertHelper.setDropDown(ref)}
+          onClose={() => AlertHelper.invokeOnClose()}
+        />
+      </PersistGate>
     </Provider>
   );
-}
+};
+
+export default App;
