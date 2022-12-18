@@ -1,69 +1,124 @@
-import React, {useState} from 'react';
-import {View, Text, Pressable} from 'react-native';
-import Container from '../../components/Container';
-import {Rating, AirbnbRating} from 'react-native-ratings';
+import React from 'react';
+import {View, FlatList} from 'react-native';
 import {scale} from 'react-native-size-matters';
-import Label from '../../components/Label';
-import CustomInput from '../../components/CustomInput';
+import Container from '../../components/Container';
+import ScreenHeader from '../../components/ScreenHeader';
+import SelectAble from '../../components/SelectAble';
+import Divider from '../../components/Divider';
 import CustomButton from '../../components/CustomButton';
-import {appColors} from '../../utils/appColors';
-import StarRating from 'react-native-star-rating';
+import ProductCard from '../../components/ProductCard';
+import {bestSellersList} from '../../utils/MockData';
+import TitleComp from '../../components/TitleComp';
 import Feather from 'react-native-vector-icons/Feather';
-export default function index({navigation,route:{params}}) {
-    const {title}  =params
-  const [activeCount, setActiveCount] = useState(3);
+import CheckBox from '../../components/CheckBox';
+import Label from '../../components/Label';
+import {AlertHelper} from '../../utils/AlertHelper';
+import paymentHelper from '../../services/paymentHelper';
+import ReduxWrapper from '../../utils/ReduxWrapper';
+ 
+
+function index(props) { 
+  const {auth: {user}, navigation} = props
+  console.log({user});
+
+  const onPaymentDone = (info) => {
+    const {error} = info;
+    if (!error) {
+      AlertHelper.show('success', 'Your Order Placed Successfully');
+      navigation.navigate('Home');
+    } else {
+      AlertHelper.show('error', 'Oops !! Something went wrong !');
+    }
+  };
+  const onPay = async () => {
+    const {email, name} = user;
+    await paymentHelper(
+      {
+        description: 'Order at Amusoftech-Shop',
+        currency: 'INR',
+        amount: '5000',
+        name: 'foo',
+        prefill: {
+          email: email,
+          contact: '9464145008',
+          name: name,
+        },
+      },
+      onPaymentDone,
+    );
+  };
   return (
-    <Container>
+    <>
+      <Container isScrollable>
+        <ScreenHeader label="Summary" navigation={navigation} />
+
+        <View style={{}}>
+          <FlatList
+            showsHorizontalScrollIndicator={false}
+            ItemSeparatorComponent={() => <View style={{padding: scale(10)}} />}
+            horizontal
+            data={bestSellersList}
+            renderItem={({item, index}) => (
+              <ProductCard key={index} item={item} />
+            )}
+          />
+        </View>
+        <SelectAble
+          item={{
+            label: 'Shipping Address',
+            subLabel:
+              '21, Alex Davidson Avenue, Opposite Omegatron, Vicent Smith Quarters, Victoria Island, Lagos, Nigeria',
+          }}
+          selected
+        />
+        <Divider isDark />
+        <View style={{paddingVertical: scale(20)}}>
+          <TitleComp heading="Payment" />
+          <View
+            style={{
+              paddingVertical: scale(20),
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+            <Feather name="credit-card" size={scale(25)} />
+            <View style={{}}>
+              <Label
+                text="Master Card"
+                style={{fontSize: scale(13), opacity: scale(0.5)}}
+              />
+              <Label text="**** **** **** 1234" style={{fontSize: scale(17)}} />
+            </View>
+            <CheckBox isChecked />
+          </View>
+        </View>
+        {/* <SelectAble
+          item={{
+            label: 'Shipping Address',
+            subLabel:
+              '21, Alex Davidson Avenue, Opposite Omegatron, Vicent Smith Quarters, Victoria Island, Lagos, Nigeria',
+          }}
+          selected
+        /> */}
+        <Divider isDark />
+      </Container>
       <View
         style={{
           flexDirection: 'row',
-          justifyContent: 'center',
-          paddingVertical: scale(40),
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          paddingHorizontal: scale(20),
+          bottom: scale(10),
         }}>
-        <Pressable onPress={() => navigation.goBack()} style={{left: -105}}>
-          <Feather
-            name={'chevron-down'}
-            size={scale(25)}
-            color={appColors.black}
-          />
-        </Pressable>
-        <Label
-          text="Write Review"
-          style={{fontWeight: '500', fontSize: scale(18)}}
+        <CustomButton
+          onPress={() => navigation.goBack()}
+          label="back"
+          unFilled
         />
+        <CustomButton onPress={onPay} label="Pay" />
       </View>
-
-      <View style={{paddingVertical: scale(20)}}>
-        <Label
-          text={title}
-          style={{fontWeight: '800', fontSize: scale(28)}}
-        />
-      </View>
-
-      <View style={{paddingVertical: scale(20), width: '80%'}}>
-        <StarRating
-          disabled={false}
-          maxStars={5}
-          rating={activeCount}
-          selectedStar={(rating) => setActiveCount(rating)}
-          fullStarColor={appColors.yellow}
-          emptyStarColor={appColors.lightGray}
-        />
-      </View>
-
-      <View style={{paddingVertical: scale(20)}}>
-        <CustomInput
-          containerStyle={{backgroundColor: 'transparent'}}
-          placeholder="Tell us your experience"
-          InputStyle={{fontSize: scale(18)}}
-        />
-      </View>
-
-      <View style={{paddingVertical: scale(20), alignItems: 'flex-end'}}>
-        <View style={{flex: 0.5, width: '50%'}}>
-          <CustomButton label="SEND" />
-        </View>
-      </View>
-    </Container>
+    </>
   );
 }
+
+export default ReduxWrapper(index);
