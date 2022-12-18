@@ -1,5 +1,10 @@
 {
   "name": "Amusoftech",
   "displayName": "Amusoftech",
-  "navigationTypeTabs": true
+  "navigationTypeTabs": true,
+  "extra": {
+    "eas": {
+      "projectId": "39c0b930-dee2-413a-a663-136699f17ad6"
+    }
+  }
 }
