@@ -1,52 +1,27 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import React ,{useEffect,useState}from 'react';
-import MainStack from './app/routing/MainStack';
-import {Provider} from 'react-redux';
-import {StatusBar} from 'react-native';
-import storePre from './app/redux/store';
-import DropdownAlert from 'react-native-dropdownalert';
-import {AlertHelper} from './app/utils/AlertHelper';
-import {PersistGate} from 'redux-persist/integration/react';
-import TabNavigationStack from './app/routing/TabNavigationStack';
-import {navigationTypeTabs} from './app.json';
-import Feather from 'react-native-vector-icons/Feather'; 
-import Ionicons from 'react-native-vector-icons/Ionicons'; 
-import FontAwesome from 'react-native-vector-icons/FontAwesome'; 
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons'; 
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'; 
+import Home from './pages/Home';
+import Detail from './pages/Detail';
+import Produk from './pages/Produk';
+import Cart from './pages/Cart';
+import CartWithData from './pages/CartWithData';
 
-MaterialIcons.loadFont()
-Ionicons.loadFont()
-FontAwesome.loadFont()
-Feather.loadFont()
-MaterialCommunityIcons.loadFont()
-const App: () => React$Node = () => {
-  const {persistor, store} = storePre;
- 
 
+export default function App() {
+
+  const Stack = createNativeStackNavigator();
+  
   return (
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        {navigationTypeTabs ? <TabNavigationStack/> : <MainStack />} 
-        <DropdownAlert
-          defaultContainer={{
-            padding: 8,
-            paddingTop: StatusBar.currentHeight,
-            flexDirection: 'row',
-          }}
-          ref={(ref) => AlertHelper.setDropDown(ref)}
-          onClose={() => AlertHelper.invokeOnClose()}
-        />
-      </PersistGate>
-    </Provider>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName="Home" >
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Produk" component={Produk} />
+        <Stack.Screen name="Detail" component={Detail} />
+        <Stack.Screen name="Cart" component={Cart} />
+        <Stack.Screen name="CartWithData" component={CartWithData} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-};
+}
 
-export default App;

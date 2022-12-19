@@ -1,10 +1,39 @@
 {
-  "name": "Amusoftech",
-  "displayName": "Amusoftech",
-  "navigationTypeTabs": true,
-  "extra": {
-    "eas": {
-      "projectId": "39c0b930-dee2-413a-a663-136699f17ad6"
+  "expo": {
+    "name": "Marbel",
+    "slug": "test",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#24A384"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.tiwi.Marbel",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0a4f18dd-6956-437b-a4cc-c20af8fba316"
+      }
     }
   }
 }
